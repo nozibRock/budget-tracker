@@ -1,7 +1,9 @@
 document.getElementById("invalid-message").style.display = "none";
 document.getElementById("income-message").style.display = "none";
 document.getElementById("earning-message").style.display = "none";
+document.getElementById("error-pos-msg").style.display = "none";
 document.getElementById("error-msg").style.display = "none";
+document.getElementById("error-msg2").style.display = "none";
 
 // get input value
 function getValue(id) {
@@ -32,14 +34,6 @@ function getTotalSpend() {
   }
 }
 
-function savingsAmount() {
-  const incomeInput = document.getElementById("incomeInput");
-  const income = parseFloat(incomeInput.value);
-  const perc = document.getElementById("percentage");
-  const percentage = parseFloat(perc.value);
-  const savingsCashAmount = ((income * percentage) / 100).toFixed(2);
-  return savingsCashAmount;
-}
 window.addEventListener("load", () => {
   document.getElementById("calculate-btn").addEventListener("click", () => {
     const totalIncome = getValue("#incomeInput");
@@ -66,26 +60,7 @@ window.addEventListener("load", () => {
       }
     }
   });
-  document.getElementById("save").addEventListener("click", () => {
-    const savings = document.getElementById("saving-amount");
-    const savingsText = savingsAmount();
-    const balanceAmount = parseFloat(
-      document.getElementById("balance").innerText
-    );
-    console.log(balanceAmount);
-    const remainBalance = document.getElementById("remaining-balance");
 
-    if (parseFloat(balanceAmount) > parseFloat(savingsText)) {
-      document.getElementById("error-msg").style.display = "none";
-      savings.innerText = savingsText;
-      remainBalance.innerText =
-        parseFloat(balanceAmount) - parseFloat(savingsText);
-    } else {
-      document.getElementById("error-msg").style.display = "block";
-      savingsText.innerText = null;
-      remainBalance.innerText = null;
-    }
-  });
   document.getElementById("save").addEventListener("click", () => {
     //Gets The New Balance
     const newBalanceField = document.getElementById("balance");
@@ -95,21 +70,19 @@ window.addEventListener("load", () => {
     const totalSpending = parseFloat(totalExpenses.innerText);
 
     //Updates the saving amount
-    const perc = getValue("#percentage");
-    const savingAmount = totalIncome * (perc / 100);
+    const percentage = getValue("#percentage");
+    const savingAmount = totalIncome * (percentage / 100);
 
     // Updates Remaining Balance
     const remainingBalance = newBalance - savingAmount;
 
     //Error handling for Saving Button and Saving Amount
-    if (perc < 0) {
-      alert("Please enter a positive amount you want to save");
+    if (percentage < 0) {
+      document.getElementById("error-pos-msg").style.display = "block";
     } else if (totalIncome < savingAmount) {
-      alert("You can't save more than you Earn");
-    } else if (isNaN(totalIncome) || isNaN(perc) || isNaN(totalSpending)) {
-      alert("Please fill the above field");
+      document.getElementById("error-msg2").style.display = "block";
     } else if (remainingBalance < 0) {
-      alert("You don't have enough balance to save");
+      document.getElementById("error-msg").style.display = "block";
     } else {
       const savingField = document.getElementById("saving-amount");
       savingField.innerText = savingAmount;
@@ -118,7 +91,7 @@ window.addEventListener("load", () => {
       remainingBalanceField.innerText = remainingBalance;
     }
 
-    //Clears out Input Field
+    // Clears out Input Field
     const input = Array.from(document.querySelectorAll("input"));
     input.forEach((e) => {
       e.value = "";
