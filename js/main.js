@@ -1,3 +1,4 @@
+document.getElementById("invalid-message").style.display = "none";
 // get value
 function getValue(id) {
   return document.getElementById(id).value;
@@ -7,10 +8,18 @@ function updateTotalExpenses() {
   const rentExpense = parseFloat(getValue("rentExpensesInput"));
   const clothExpense = parseFloat(getValue("clothesExpensesInput"));
 
-  /* if (foodExpense > 0 && rentExpense > 0 && clothExpense > 0) {
-      
-  } */
-  return foodExpense + rentExpense + clothExpense;
+  if (
+    (foodExpense > 0 &&
+    rentExpense > 0 &&
+    clothExpense > 0) &&
+    (foodExpense % 1 == 0 &&
+    rentExpense % 1 == 0 &&
+    clothExpense % 1 == 0)
+  ) {
+    return foodExpense + rentExpense + clothExpense;
+  } else {
+    return (document.getElementById("invalid-message").style.display = "block");
+  }
 }
 function balance() {
   const income = parseFloat(getValue("incomeInput"));
@@ -32,12 +41,13 @@ window.addEventListener("load", () => {
     const balanceText = document.getElementById("balance");
     balanceText.innerText = balance();
   });
-  document.getElementById("save").addEventListener('click', () => {
-      const savings = document.getElementById("saving-amount");
-        const savingsText = savingsAmount();
-      savings.innerText = savingsText;
-      const balanceAmount = balance();
-      const remainBalance = document.getElementById("remaining-balance");
-      remainBalance.innerText = parseFloat(balanceAmount) - parseFloat(savingsText)
+  document.getElementById("save").addEventListener("click", () => {
+    const savings = document.getElementById("saving-amount");
+    const savingsText = savingsAmount();
+    savings.innerText = savingsText;
+    const balanceAmount = balance();
+    const remainBalance = document.getElementById("remaining-balance");
+    remainBalance.innerText =
+      parseFloat(balanceAmount) - parseFloat(savingsText);
   });
 });
