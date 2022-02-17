@@ -1,4 +1,6 @@
 document.getElementById("invalid-message").style.display = "none";
+document.getElementById("error-msg").style.display = "none";
+
 // get value
 function getValue(id) {
   return document.getElementById(id).value;
@@ -9,12 +11,12 @@ function updateTotalExpenses() {
   const clothExpense = parseFloat(getValue("clothesExpensesInput"));
 
   if (
-    (foodExpense > 0 &&
-    rentExpense > 0 &&
-    clothExpense > 0) &&
-    (foodExpense % 1 == 0 &&
+    foodExpense >= 0 &&
+    rentExpense >= 0 &&
+    clothExpense >= 0 &&
+    foodExpense % 1 == 0 &&
     rentExpense % 1 == 0 &&
-    clothExpense % 1 == 0)
+    clothExpense % 1 == 0
   ) {
     return foodExpense + rentExpense + clothExpense;
   } else {
@@ -29,10 +31,11 @@ function balance() {
 }
 
 function savingsAmount() {
-  const balanceAmount = parseFloat(balance());
+  const income = parseFloat(getValue("incomeInput"));
   const perc = document.getElementById("percentage");
   const percentage = parseFloat(perc.value);
-  return ((balanceAmount * percentage) / 100).toFixed(3);
+  const savingsCashAmount = ((income * percentage) / 100).toFixed(2);
+  return savingsCashAmount;
 }
 window.addEventListener("load", () => {
   document.getElementById("calculate-btn").addEventListener("click", () => {
@@ -44,10 +47,16 @@ window.addEventListener("load", () => {
   document.getElementById("save").addEventListener("click", () => {
     const savings = document.getElementById("saving-amount");
     const savingsText = savingsAmount();
-    savings.innerText = savingsText;
     const balanceAmount = balance();
     const remainBalance = document.getElementById("remaining-balance");
-    remainBalance.innerText =
-      parseFloat(balanceAmount) - parseFloat(savingsText);
+
+    if (parseFloat(balanceAmount) > parseFloat(savingsText)) {
+      document.getElementById("error-msg").style.display = "none";
+      savings.innerText = savingsText;
+      remainBalance.innerText =
+        parseFloat(balanceAmount) - parseFloat(savingsText);
+    } else {
+      document.getElementById("error-msg").style.display = "block";
+    }
   });
 });
