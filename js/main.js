@@ -3,35 +3,12 @@ document.getElementById("error-msg").style.display = "none";
 
 // get value
 function getValue(id) {
-  return document.getElementById(id).value;
-}
-function updateTotalExpenses() {
-  const foodExpense = parseFloat(getValue("foodExpensesInput"));
-  const rentExpense = parseFloat(getValue("rentExpensesInput"));
-  const clothExpense = parseFloat(getValue("clothesExpensesInput"));
-
-  if (
-    foodExpense >= 0 &&
-    rentExpense >= 0 &&
-    clothExpense >= 0 &&
-    foodExpense % 1 == 0 &&
-    rentExpense % 1 == 0 &&
-    clothExpense % 1 == 0
-  ) {
-    return foodExpense + rentExpense + clothExpense;
-  } else {
-    return (document.getElementById("invalid-message").style.display = "block");
-  }
-}
-function balance() {
-  const income = parseFloat(getValue("incomeInput"));
-  const totalExpenses = updateTotalExpenses();
-
-  return income - totalExpenses;
+  return document.getElementById(id);
 }
 
 function savingsAmount() {
-  const income = parseFloat(getValue("incomeInput"));
+  const incomeInput = document.getElementById("incomeInput");
+  const income = parseFloat(incomeInput.value);
   const perc = document.getElementById("percentage");
   const percentage = parseFloat(perc.value);
   const savingsCashAmount = ((income * percentage) / 100).toFixed(2);
@@ -39,15 +16,39 @@ function savingsAmount() {
 }
 window.addEventListener("load", () => {
   document.getElementById("calculate-btn").addEventListener("click", () => {
-    const totalExpenses = document.getElementById("totalExpenses");
-    totalExpenses.innerText = updateTotalExpenses();
-    const balanceText = document.getElementById("balance");
-    balanceText.innerText = balance();
+    const income = getValue("incomeInput");
+
+    const foodExpense = getValue("foodExpensesInput");
+    const rentExpense = getValue("rentExpensesInput");
+    const clothExpense = getValue("clothesExpensesInput");
+
+    if (
+      parseFloat(income.value) > 0 &&
+      parseFloat(foodExpense.value) > 0 &&
+      parseFloat(foodExpense.value) > 0
+    ) {
+      const totalExpenses = document.getElementById("totalExpenses");
+      const totalCost =
+        parseFloat(foodExpense.value) +
+        parseFloat(rentExpense.value) +
+        parseFloat(clothExpense.value);
+
+      const balance = parseFloat(income.value) - totalCost;
+
+      totalExpenses.innerText = totalCost;
+      const balanceText = document.getElementById("balance");
+      balanceText.innerText = balance;
+    } else {
+      document.getElementById("invalid-message").style.display = "block";
+      totalExpenses.innerText = null;
+      balanceText.innerText = null;
+    }
   });
   document.getElementById("save").addEventListener("click", () => {
     const savings = document.getElementById("saving-amount");
     const savingsText = savingsAmount();
-    const balanceAmount = balance();
+    const balanceAmount = parseFloat(document.getElementById("balance").innerText);
+    console.log(balanceAmount);
     const remainBalance = document.getElementById("remaining-balance");
 
     if (parseFloat(balanceAmount) > parseFloat(savingsText)) {
@@ -57,6 +58,8 @@ window.addEventListener("load", () => {
         parseFloat(balanceAmount) - parseFloat(savingsText);
     } else {
       document.getElementById("error-msg").style.display = "block";
+      savingsText.innerText = null;
+      remainBalance.innerText = null;
     }
   });
 });
